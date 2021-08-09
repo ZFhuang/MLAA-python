@@ -2,6 +2,8 @@
 
 A simple python implementation of Morphological Antialiasing
 
+[Notes](https://github.com/ZFhuang/Study-Notes/blob/main/Content/%E5%9B%BE%E5%BD%A2%E5%AD%A6/%E5%BD%A2%E6%80%81%E6%8A%97%E9%94%AF%E9%BD%BFMLAA%E4%B8%8EPython%E5%AE%9E%E7%8E%B0/README.md)
+
 ## Requirements
 
 - tqdm
