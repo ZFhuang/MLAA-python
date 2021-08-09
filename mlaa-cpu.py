@@ -2,7 +2,6 @@ import argparse
 import os
 from tqdm import tqdm
 import numpy as np
-import math
 
 if (__package__ == '') or (__package__ is None):
     import sys
@@ -24,12 +23,10 @@ def _find_edges(img, th=0.1):
     for y in range(1, img.shape[0]):
         for x in range(0, img.shape[1]):
             if abs(img[y, x]-img[y-1, x]) > th:
-                # 横边, 在像素下面
                 buffer[y, x, 1] = 1
     for y in range(0, img.shape[0]):
         for x in range(1, img.shape[1]):
             if abs(img[y, x]-img[y, x-1]) > th:
-                # 竖边, 在像素右边
                 buffer[y, x, 0] = 1
     return buffer
 
@@ -309,13 +306,19 @@ def _blend_color(img_in, img_weight):
 def mlaa_img_luminance(img, num_th):
     img_lu = _get_luminance_img(img)
 
+    utils.save_img_float('halfway/luminance.bmp', img_lu)
+
     img_edge = _find_edges(img_lu, num_th)
+
+    utils.save_img_float('halfway/edge.bmp', img_edge)
 
     list_aliasing_x = _find_aliasings_x(img_edge)
     list_aliasing_y = _find_aliasings_y(img_edge)
 
     img_weight = _get_weights(img_lu.shape, list_aliasing_x, list_aliasing_y)
     
+    utils.save_img_float('halfway/weights.bmp', img_weight)
+
     img[:,:,0] = _blend_color(img[:,:,0], img_weight)
     img[:,:,1] = _blend_color(img[:,:,1], img_weight)
     img[:,:,2] = _blend_color(img[:,:,2], img_weight)
@@ -374,10 +377,10 @@ if __name__ == '__main__':
     parser.add_argument('--target', dest='dir_tar',
                         type=str, default='.', help='target folder of result images. Default path is "{DIR_ORI}_out/"', required=False)
     parser.add_argument('--save', dest='str_suffix',
-                        type=str, help='result img suffix', default='.bmp', required=False)
+                        type=str, help='result images suffix', default='.bmp', required=False)
     parser.add_argument('--type', dest='str_type',
-                        type=str, help='type string for finding img edges. "L": using luminance; "P": using perchannel color value', default='L', required=False)
+                        type=str, help='type string for finding image edges. "L": using luminance; "P": using per-channel color value', default='L', required=False)
     parser.add_argument('--th', dest='num_th',
-                        type=float, help='threshold for finding edgels', default=0.1, required=False)
+                        type=float, help='threshold for finding edges', default=0.1, required=False)
     args = parser.parse_args()
     main(args.dir_ori, args.dir_tar, args.str_suffix, args.str_type, args.num_th)
